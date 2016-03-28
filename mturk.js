@@ -11,11 +11,6 @@
 
 // selector used by jquery to identify your form
 var form_selector = "#mturk_form";
-var reward_collected = "#total_reward";
-var time = reward_collected * 10000
-var num_key_presses =
-
-
 
 //  Turkify the captioning page.
 $(document).ready(function () {
