@@ -3,6 +3,7 @@
 <head>
 <title>Best Game</title>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="mturk.js"></script>
 
 
 <script>
@@ -16,6 +17,8 @@ var obstacles = [[0,0,0,0,0,0],
                  [0,0,0,0,0,0]]
 var stillGoing = true;
 var total_reward = 0;
+var key_presses = 0;
+var time_spent = 0;
 
 $(document).ready(function() {
   var gameboard = $("<div id='gameboard'></div>");
@@ -27,6 +30,7 @@ $(document).ready(function() {
   $(document).keydown(function(e) {
     if (stillGoing) {
       if(e.keyCode==37) {
+        key_presses++;
         // left arrow clicked
         if(piecex==0) {
           piecex = 250;
@@ -36,7 +40,8 @@ $(document).ready(function() {
         }
         
       } else if(e.keyCode == 39) {
-        // right arrow clicked
+        key_presses++;
+      // right arrow clicked
         if(piecex==250) {
           piecex = 0;
         }
@@ -49,14 +54,18 @@ $(document).ready(function() {
       index = parseInt($(".piece").css("left").replace(/[^-\d\.]/g, ''))/50;
       if (obstacles[5][index] == 1) {
         stillGoing = false;
+        $("#keyPresses").val(key_presses);
+        $("#timeSpent").val(time_spent);
+        $("#rewardCollected").val(total_reward/1000);
         window.alert("you lose :(")
       }
     }
   });
   setInterval(function() {
     if (stillGoing) {
-      total_reward += 10;
-      $("#reward").html("$" + total_reward/10000);
+      time_spent += 1000;
+      total_reward += 1;
+      $("#reward").html("$" + total_reward/1000);
       for (i = obstacles.length-1; i > 0; i--) {
         for (j = 0; j < 6; j++) {
         obstacles[i][j] = obstacles[i - 1][j];        
@@ -84,6 +93,9 @@ $(document).ready(function() {
       pieceIndex = parseInt($(".piece").css("left").replace(/[^-\d\.]/g, ''))/50;
       if (obstacles[5][pieceIndex] == 1 || total_reward == 2 * 10000) {
         stillGoing = false;
+        $("#keyPresses").val(key_presses);
+        $("#timeSpent").val(time_spent);
+        $("#rewardCollected").val(total_reward/1000);
         window.alert("you lose :(")
       }
     }

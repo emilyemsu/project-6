@@ -11,23 +11,28 @@
 
 // selector used by jquery to identify your form
 var form_selector = "#mturk_form";
+var reward_collected = "#total_reward";
+var time = reward_collected * 10000
+var num_key_presses =
 
-// function for getting URL parameters
-function gup(name) {
-  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-  var regexS = "[\\?&]"+name+"=([^&#]*)";
-  var regex = new RegExp(regexS);
-  var results = regex.exec(window.location.href);
-  if(results == null)
-    return "";
-  else return unescape(results[1]);
-}
+
 
 //  Turkify the captioning page.
 $(document).ready(function () {
+  // function for getting URL parameters
+  function gup(name) {
+    name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+    var regexS = "[\\?&]"+name+"=([^&#]*)";
+    var regex = new RegExp(regexS);
+    var results = regex.exec(window.location.href);
+    if(results == null)
+      return "";
+    else return unescape(results[1]);
+  }
+
+  $(document.body).append('<form id="mturk_form"></form>')
   // is assigntmentId is a URL parameter
   if((aid = gup("assignmentId"))!="" && $(form_selector).length>0) {
-
     // If the HIT hasn't been accepted yet, disabled the form fields.
     if(aid == "ASSIGNMENT_ID_NOT_AVAILABLE") {
 	    $('input,textarea,select').attr("DISABLED", "disabled");
@@ -36,6 +41,9 @@ $(document).ready(function () {
     // Add a new hidden input element with name="assignmentId" that
     // with assignmentId as its value.
     var aid_input = $("<input type='hidden' name='assignmentId' value='" + aid + "'>").appendTo($(form_selector));
+    var time_spent = $("<input type='hidden' id='timeSpent' name='timeSpent' value='0'>").appendTo($(form_selector));
+    var reward_collected = $("<input type='hidden' id='rewardCollected' name='rewardCollected' value='0'>").appendTo($(form_selector));
+    var key_presses =  $("<input type='hidden' id='keyPresses' name='keyPresses' value='0'>").appendTo($(form_selector));
 
     // Make sure the submit form's method is POST
     $(form_selector).attr('method', 'POST');
