@@ -2,13 +2,15 @@
 <html>
 <head>
 <title>Best Game</title>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="mturk.js"></script>
 
 
 <script>
 var piecex = 150;
-var piecey = 250;
+var piecey = 250; 
+
+
 var obstacles = [[0,0,0,0,0,0],
                  [0,0,0,0,0,0],
                  [0,0,0,0,0,0],
@@ -25,6 +27,8 @@ $(document).ready(function() {
   $(document.body).append(gameboard);
   var piece = $("<div class='piece'></div>");
   $(gameboard).append(piece);
+  var global = $("<div class='piece'></div>");
+  $(gameboard).append(global);
   var reward = $("<div id='reward'>0</div>"); 
   $(document.body).append(reward);
   $(document).keydown(function(e) {
@@ -51,7 +55,7 @@ $(document).ready(function() {
       }
       $(".piece").css("left", piecex + "px");
 
-      index = parseInt($(".piece").css("left").replace(/[^-\d\.]/g, ''))/50;
+      index = parseInt($(".global").css("left").replace(/[^-\d\.]/g, ''))/50;
       if (obstacles[5][index] == 1) {
         stillGoing = false;
         $("#keyPresses").val(key_presses);
@@ -65,6 +69,8 @@ $(document).ready(function() {
     if (stillGoing) {
       time_spent += 1000;
       total_reward += 1;
+      updateBoard();
+      setTimeout(updateBoard, 1000);
       $("#reward").html("$" + total_reward/1000);
       for (i = obstacles.length-1; i > 0; i--) {
         for (j = 0; j < 6; j++) {
@@ -101,6 +107,53 @@ $(document).ready(function() {
     }
   }, 1000);
 })
+
+function doSomething(json) {
+  console.log(json);
+}
+
+function updateBoard() {
+  var arr = []; 
+  var globalx = 150;
+  var globaly = 250;
+
+  var data = {
+      key: "emem", 
+      data: JSON.stringify({localship_x: piecex, active: stillGoing})
+  };
+
+  $.ajax({
+    url: "http://codingthecrowd.com/counter.php", 
+
+    jsonp: "callback",
+
+    jsonpCallback: "doSomething",
+
+    dataType: "jsonp",
+
+    data: data,
+    
+    success: function(response) {
+      console.log(JSON.stringify(response))
+      for (i = 0; i < response["count"]; i++) {
+          arr.push(response["results"][i]["localship_x"])
+      }
+      
+      arr.sort();
+      var half = Math.floor(arr.length/2);
+      if(arr.length % 2) {
+        globalx =  arr[half];
+      } else { 
+        globalx = (arr[half-1]) / 2.0;
+      }
+    },
+
+    failure: function(response) {
+      console.log("Request Failed: " + error);
+    }
+
+  });
+}
 </script>
 
 
@@ -134,7 +187,15 @@ $(document).ready(function() {
 }
 
 .piece {
-  /*background-color: #AAF;*/
+  background-color: #AAF;
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  left: 150px;
+  top: 250px;
+}
+
+.globalpiece {
   background-image: url("rocket.png");
   width: 50px;
   height: 50px;
@@ -142,6 +203,7 @@ $(document).ready(function() {
   left: 150px;
   top: 250px;
 }
+
 </style>
 </head>
 <body>

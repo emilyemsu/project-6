@@ -12,8 +12,6 @@
 // selector used by jquery to identify your form
 var form_selector = "#mturk_form";
 
-//  Turkify the captioning page.
-$(document).ready(function () {
   // function for getting URL parameters
   function gup(name) {
     name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
@@ -25,6 +23,8 @@ $(document).ready(function () {
     else return unescape(results[1]);
   }
 
+//  Turkify the captioning page.
+$(document).ready(function () {
   $(document.body).append('<form id="mturk_form"></form>')
   // is assigntmentId is a URL parameter
   if((aid = gup("assignmentId"))!="" && $(form_selector).length>0) {
