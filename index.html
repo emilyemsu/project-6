@@ -55,6 +55,7 @@ $(document).ready(function() {
       }
       $(".piece").css("left", piecex + "px");
 
+
       index = parseInt($(".globalpiece").css("left").replace(/[^-\d\.]/g, ''))/50;
       if (obstacles[5][index] == 1) {
         stillGoing = false;
@@ -67,10 +68,9 @@ $(document).ready(function() {
   });
   setInterval(function() {
     if (stillGoing) {
+      updateBoard();
       time_spent += 1000;
       total_reward += 1;
-      updateBoard();
-      setTimeout(updateBoard, 1000);
       $("#reward").html("$" + total_reward/1000);
       for (i = obstacles.length-1; i > 0; i--) {
         for (j = 0; j < 6; j++) {
@@ -112,9 +112,12 @@ function doSomething(json) {
   var arr = []; 
   var globalx = 150;
   var globaly = 250;
-
+  console.log("beep")
   for (i = 0; i < json["count"]; i++) {
-          arr.push(json["results"][i]["localship_x"])
+          var data = eval(JSON.stringify(json["results"][i]["data"]));
+          var localship_x = JSON.parse(data)["localship_x"];
+          console.log(localship_x);
+          arr.push(localship_x);
       }
       
       arr.sort();
@@ -122,12 +125,12 @@ function doSomething(json) {
       if(arr.length % 2) {
         globalx =  arr[half];
       } else { 
-        globalx = (arr[half-1]) / 2.0;
+        globalx = (arr[half-1]);
       }
+      $(".globalpiece").css("left", globalx + "px");
 }
 
 function updateBoard() {
-
 
   var data = {
       key: "emem", 
